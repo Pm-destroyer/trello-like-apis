@@ -14,6 +14,7 @@ const userController = require('./controller/user.controller');
 const workspaceController = require('./controller/workspace.controller');
 const boardController = require('./controller/board.controller');
 const activityController = require('./controller/activity.controller');
+const taskController = require('./controller/task.controller');
 
 app.post('/user/create', userController.addUser);
 
@@ -59,6 +60,16 @@ app.post(
 app.post('/activity/deleteActivity', activityController.deleteActivity);
 
 app.post('/activity/editActivity', activityController.editActivity);
+
+app.post('/task/create', taskController.addTask);
+
+app.post('/task/viewTask', taskController.viewTask);
+
+app.post('/task/editTask', taskController.editTask);
+
+app.post('/task/deleteTask', taskController.deleteTask);
+
+app.post('/task/markAsDone', taskController.markAsDone);
 
 app.listen(8000, () => {
   console.log('Server started on port 8000');

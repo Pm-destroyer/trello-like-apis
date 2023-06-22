@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const { Op } = require('sequelize');
+const crypto = require('crypto');
 
 const activitySchema = require('../schema/activity.schema');
 const boardSchema = require('../schema/board.schema');
