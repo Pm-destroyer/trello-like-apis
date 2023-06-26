@@ -41,8 +41,26 @@ const activityModel = {
             activityId: req.activityId,
           },
         })
-        .then((result) => {
+        .then(async (result) => {
           if (result) {
+            for (const key in result) {
+              const memberIds =
+                result[key].dataValues.visibleTo !== null
+                  ? result[key].dataValues.visibleTo.split(',')
+                  : null;
+
+              if (memberIds !== null) {
+                const members = await userSchema.findAll({
+                  where: { id: { [Op.in]: memberIds } },
+                  attributes: ['id', 'username'],
+                });
+
+                result[key].dataValues.members = members;
+              } else {
+                result[key].dataValues.members = [];
+              }
+            }
+
             res.send(result);
           } else {
             res.send(null);
@@ -128,7 +146,10 @@ const activityModel = {
     try {
       await taskSchema
         .update(
-          { visibleTo: req.visibleTo.join(',') },
+          {
+            visibleTo:
+              req.visibleTo.length === 0 ? null : req.visibleTo.join(','),
+          },
           {
             where: { id: req.id },
           }
@@ -151,7 +172,21 @@ const activityModel = {
           attributes: ['id', 'visibleTo'],
         })
         .then(async (result) => {
-          res.send(result);
+          if (result.dataValues.visibleTo !== null) {
+            await userSchema
+              .findAll({
+                where: {
+                  id: { [Op.in]: [result.dataValues.visibleTo.split(',')] },
+                },
+                attributes: ['id', 'username'],
+              })
+              .then((members) => {
+                result.dataValues.members = members;
+                res.send(result);
+              });
+          } else {
+            res.send(result);
+          }
         })
         .catch((err) => res.send(err));
     } catch (error) {
