@@ -24,6 +24,10 @@ const activities = connection.define('tasks', {
     field: 'status',
     type: Sequelize.INTEGER,
   },
+  visibleTo: {
+    field: 'visibleTo',
+    type: Sequelize.STRING,
+  },
 });
 
 module.exports = activities;

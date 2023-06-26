@@ -24,6 +24,8 @@ app.post('/user/getUserByToken', userController.getUserByToken);
 
 app.post('/user/view', userController.viewUsers);
 
+app.post('/user/userDropByWorkspace', userController.userDropByWorkspace);
+
 app.post('/workspace/create', workspaceController.addWorkspace);
 
 app.get('/workspace/workspaceTypeDrop', workspaceController.workspaceTypeDrop);
@@ -70,6 +72,10 @@ app.post('/task/editTask', taskController.editTask);
 app.post('/task/deleteTask', taskController.deleteTask);
 
 app.post('/task/markAsDone', taskController.markAsDone);
+
+app.post('/task/manageVisibility', taskController.manageVisibility);
+
+app.post('/task/addedMembers', taskController.addedMembers);
 
 app.listen(8000, () => {
   console.log('Server started on port 8000');

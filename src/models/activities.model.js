@@ -114,7 +114,7 @@ const activityModel = {
             where: { id: req.id },
           }
         )
-        .then((result) => res.send(result))
+        .then(async (result) => res.send(result))
         .catch((err) => res.send(err));
     } catch (error) {
       console.log(error);

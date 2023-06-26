@@ -74,10 +74,16 @@ const activityModel = {
     try {
       await taskSchema
         .update(req, { where: { id: req.id } })
-        .then((result) => {
+        .then(async (result) => {
           if (result) {
-            res.send(result);
-          } else res.send(0);
+            await activitySchema
+              .update(
+                { lastModified: req.userId },
+                { where: { id: req.activityId } }
+              )
+              .then((activityRes) => res.send(activityRes))
+              .catch((activityErr) => res.send(activityErr));
+          } else res.send(null);
         })
         .catch((error) => {
           console.log(error);
@@ -98,7 +104,55 @@ const activityModel = {
             where: { id: req.id },
           }
         )
-        .then((result) => res.send(result))
+        .then(async (result) => {
+          if (result) {
+            await activitySchema
+              .update(
+                { lastModified: req.userId },
+                { where: { id: req.activityId } }
+              )
+              .then((activityRes) => res.send(activityRes))
+              .catch((activityErr) => res.send(activityErr));
+          } else {
+            res.send(null);
+          }
+        })
+        .catch((err) => res.send(err));
+    } catch (error) {
+      console.log(error);
+      res.send(error);
+    }
+  },
+
+  manageVisibility: async (req, res) => {
+    try {
+      await taskSchema
+        .update(
+          { visibleTo: req.visibleTo.join(',') },
+          {
+            where: { id: req.id },
+          }
+        )
+        .then(async (result) => {
+          res.send(result);
+        })
+        .catch((err) => res.send(err));
+    } catch (error) {
+      console.log(error);
+      res.send(error);
+    }
+  },
+
+  addedMembers: async (req, res) => {
+    try {
+      await taskSchema
+        .findOne({
+          where: { id: req.id },
+          attributes: ['id', 'visibleTo'],
+        })
+        .then(async (result) => {
+          res.send(result);
+        })
         .catch((err) => res.send(err));
     } catch (error) {
       console.log(error);

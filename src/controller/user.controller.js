@@ -16,6 +16,10 @@ const UserController = {
   viewUsers: (req, res) => {
     userModel.viewUsers(req.body, res);
   },
+
+  userDropByWorkspace: (req, res) => {
+    userModel.userDropByWorkspace(req.body, res);
+  },
 };
 
 module.exports = UserController;

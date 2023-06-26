@@ -20,6 +20,14 @@ const taskController = {
   markAsDone: (req, res) => {
     taskModel.markAsDone(req.body, res);
   },
+
+  manageVisibility: (req, res) => {
+    taskModel.manageVisibility(req.body, res);
+  },
+
+  addedMembers: (req, res) => {
+    taskModel.addedMembers(req.body, res);
+  },
 };
 
 module.exports = taskController;

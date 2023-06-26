@@ -151,6 +151,40 @@ const UserModel = {
       res.send(err);
     }
   },
+
+  userDropByWorkspace: async (req, res) => {
+    try {
+      await workspaceSchema
+        .findOne({
+          where: {
+            id: Sequelize.where(
+              Sequelize.literal(`MD5(workspaces.id)`),
+              req.workspaceId
+            ),
+          },
+          attributes: ['members'],
+        })
+        .then(async (resWorkspace) => {
+          const members =
+            resWorkspace.dataValues.members !== null
+              ? resWorkspace.dataValues.members.split(',')
+              : [];
+          members.push(req.id);
+
+          await userSchema
+            .findAll({
+              where: { id: { [Op.in]: members } },
+              attributes: ['id', 'username'],
+            })
+            .then((result) => {
+              res.send(result);
+            });
+        });
+    } catch (err) {
+      console.error(err);
+      res.send(err);
+    }
+  },
 };
 
 module.exports = UserModel;
