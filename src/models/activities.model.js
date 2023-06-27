@@ -28,16 +28,27 @@ boardSchema.belongsTo(workspaceSchema, {
 const activityModel = {
   addActivity: async (req, res) => {
     try {
-      await activitySchema
-        .create(req)
-        .then((result) => {
-          if (result) {
-            res.send(result);
-          } else res.send(0);
+      await boardSchema
+        .findOne({
+          where: {
+            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.boardId),
+          },
+          attributes: ['id'],
         })
-        .catch((error) => {
-          console.log(error);
-          res.send(error);
+        .then(async (board) => {
+          req.boardId = board.dataValues.id;
+
+          await activitySchema
+            .create(req)
+            .then((result) => {
+              if (result) {
+                res.send(result);
+              } else res.send(0);
+            })
+            .catch((error) => {
+              console.log(error);
+              res.send(error);
+            });
         });
     } catch (err) {
       console.error(err);

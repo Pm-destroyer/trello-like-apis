@@ -129,16 +129,27 @@ const WorkspaceModel = {
   addMembers: async (req, res) => {
     try {
       await workspaceSchema
-        .update(
-          { members: req.addedMembers + req.members.join(',') + ',' },
-          {
-            where: {
-              [Op.and]: [{ userId: req.userId }, { id: req.workspaceId }],
-            },
-          }
-        )
-        .then((result) => {
-          res.send(result);
+        .findOne({
+          where: {
+            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.workspaceId),
+          },
+          attributes: ['id'],
+        })
+        .then(async (workspace) => {
+          req.workspaceId = workspace.dataValues.id;
+
+          await workspaceSchema
+            .update(
+              { members: req.addedMembers + req.members.join(',') + ',' },
+              {
+                where: {
+                  [Op.and]: [{ userId: req.userId }, { id: req.workspaceId }],
+                },
+              }
+            )
+            .then((result) => {
+              res.send(result);
+            });
         });
     } catch (error) {
       console.log(error);
@@ -149,16 +160,27 @@ const WorkspaceModel = {
   removeMember: async (req, res) => {
     try {
       await workspaceSchema
-        .update(
-          { members: req.members.join(',') + ',' },
-          {
-            where: {
-              [Op.and]: [{ userId: req.userId }, { id: req.workspaceId }],
-            },
-          }
-        )
-        .then((result) => {
-          res.send(result);
+        .findOne({
+          where: {
+            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.workspaceId),
+          },
+          attributes: ['id'],
+        })
+        .then(async (workspace) => {
+          req.workspaceId = workspace.dataValues.id;
+
+          await workspaceSchema
+            .update(
+              { members: req.members.join(',') + ',' },
+              {
+                where: {
+                  [Op.and]: [{ userId: req.userId }, { id: req.workspaceId }],
+                },
+              }
+            )
+            .then((result) => {
+              res.send(result);
+            });
         });
     } catch (error) {
       console.log(error);

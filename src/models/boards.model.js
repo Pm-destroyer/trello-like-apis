@@ -3,7 +3,6 @@ const { Op } = require('sequelize');
 
 const boardSchema = require('../schema/board.schema');
 const workspaceSchema = require('../schema/workspace.schema');
-const sequelize = require('../connection');
 
 boardSchema.belongsTo(workspaceSchema, {
   foreignKey: 'workspaceId',
@@ -12,16 +11,27 @@ boardSchema.belongsTo(workspaceSchema, {
 const BoardModel = {
   addBoard: async (req, res) => {
     try {
-      await boardSchema
-        .create(req)
-        .then((result) => {
-          if (result) {
-            res.send(result);
-          } else res.send(0);
+      await workspaceSchema
+        .findOne({
+          where: {
+            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.workspaceId),
+          },
+          attributes: ['id'],
         })
-        .catch((error) => {
-          console.log(error);
-          res.send(error);
+        .then(async (workspace) => {
+          req.workspaceId = workspace.dataValues.id;
+
+          await boardSchema
+            .create(req)
+            .then((result) => {
+              if (result) {
+                res.send(result);
+              } else res.send(0);
+            })
+            .catch((error) => {
+              console.log(error);
+              res.send(error);
+            });
         });
     } catch (err) {
       console.error(err);
