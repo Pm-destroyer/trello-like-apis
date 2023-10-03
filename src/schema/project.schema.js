@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const connection = require('../connection');
 
-const Workspaces = connection.define('workspaces', {
+const Projects = connection.define('projects', {
   id: {
     field: 'id',
     type: Sequelize.INTEGER,
@@ -20,14 +20,30 @@ const Workspaces = connection.define('workspaces', {
     field: 'description',
     type: Sequelize.STRING,
   },
-  userId: {
-    field: 'userId',
+  project_admin: {
+    field: 'project_admin',
     type: Sequelize.INTEGER,
   },
-  members: {
+  status: {
     field: 'members',
+    type: Sequelize.INTEGER,
+  },
+  start_date: {
+    field: 'start_date',
+    type: Sequelize.DATE,
+  },
+  end_date: {
+    field: 'end_date',
+    type: Sequelize.DATE,
+  },
+  est_max_costs: {
+    field: 'est_max_costs',
+    type: Sequelize.DOUBLE,
+  },
+  cost_type: {
+    field: 'cost_type',
     type: Sequelize.STRING,
   },
 });
 
-module.exports = Workspaces;
+module.exports = Projects;

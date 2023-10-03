@@ -4,6 +4,7 @@ const { Op } = require('sequelize');
 const activitySchema = require('../schema/activity.schema');
 const taskSchema = require('../schema/task.schema');
 const userSchema = require('../schema/user.schema');
+const prioritySchema = require('../schema/priority.schema');
 
 taskSchema.belongsTo(activitySchema, {
   foreignKey: 'activityId',
@@ -11,6 +12,10 @@ taskSchema.belongsTo(activitySchema, {
 
 taskSchema.belongsTo(userSchema, {
   foreignKey: 'userId',
+});
+
+taskSchema.belongsTo(prioritySchema, {
+  foreignKey: 'priorityId',
 });
 
 const activityModel = {
@@ -189,6 +194,46 @@ const activityModel = {
           }
         })
         .catch((err) => res.send(err));
+    } catch (error) {
+      console.log(error);
+      res.send(error);
+    }
+  },
+
+  addTaskPriority: async (req, res) => {
+    try {
+      await taskSchema
+        .update(
+          {
+            priorityId: req.priorityId,
+          },
+          {
+            where: { id: req.id },
+          }
+        )
+        .then(async (result) => {
+          res.send(result);
+        })
+        .catch((err) => res.send(err));
+    } catch (error) {
+      console.log(error);
+      res.send(error);
+    }
+  },
+
+  priorityList: async (req, res) => {
+    try {
+      prioritySchema
+        .findAll({
+          attributes: ['id', 'name'],
+        })
+        .then((result) => {
+          res.send(result);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.send(err);
+        });
     } catch (error) {
       console.log(error);
       res.send(error);

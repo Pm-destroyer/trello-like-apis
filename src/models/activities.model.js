@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 const activitySchema = require('../schema/activity.schema');
 const boardSchema = require('../schema/board.schema');
-const workspaceSchema = require('../schema/workspace.schema');
+const workspaceSchema = require('../schema/project.schema');
 const userSchema = require('../schema/user.schema');
 
 activitySchema.belongsTo(boardSchema, {

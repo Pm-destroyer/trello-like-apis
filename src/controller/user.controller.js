@@ -17,8 +17,8 @@ const UserController = {
     userModel.viewUsers(req.body, res);
   },
 
-  userDropByWorkspace: (req, res) => {
-    userModel.userDropByWorkspace(req.body, res);
+  userDropByProject: (req, res) => {
+    userModel.userDropByProject(req.body, res);
   },
 };
 

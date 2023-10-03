@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const { Op } = require('sequelize');
 
 const boardSchema = require('../schema/board.schema');
-const workspaceSchema = require('../schema/workspace.schema');
+const workspaceSchema = require('../schema/project.schema');
 
 boardSchema.belongsTo(workspaceSchema, {
   foreignKey: 'workspaceId',

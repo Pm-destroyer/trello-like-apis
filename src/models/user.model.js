@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
 
 const userSchema = require('../schema/user.schema');
-const workspaceSchema = require('../schema/workspace.schema');
+const workspaceSchema = require('../schema/project.schema');
 
 const checkDataExists = async (data) => {
   try {

@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const connection = require('../connection');
 
-const workspaceTypes = connection.define('workspace_types', {
+const workspaceTypes = connection.define('project_types', {
   id: {
     field: 'id',
     type: Sequelize.INTEGER,

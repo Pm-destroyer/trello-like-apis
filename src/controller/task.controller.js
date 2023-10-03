@@ -28,6 +28,14 @@ const taskController = {
   addedMembers: (req, res) => {
     taskModel.addedMembers(req.body, res);
   },
+
+  addTaskPriority: (req, res) => {
+    taskModel.addTaskPriority(req.body, res);
+  },
+
+  priorityList: (req, res) => {
+    taskModel.priorityList(req.body, res);
+  },
 };
 
 module.exports = taskController;

@@ -11,7 +11,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(cors());
 
 const userController = require('./controller/user.controller');
-const workspaceController = require('./controller/workspace.controller');
+const projectController = require('./controller/project.controller');
 const boardController = require('./controller/board.controller');
 const activityController = require('./controller/activity.controller');
 const taskController = require('./controller/task.controller');
@@ -24,21 +24,21 @@ app.post('/user/getUserByToken', userController.getUserByToken);
 
 app.post('/user/view', userController.viewUsers);
 
-app.post('/user/userDropByWorkspace', userController.userDropByWorkspace);
+app.post('/user/userDropByProject', userController.userDropByProject);
 
-app.post('/workspace/create', workspaceController.addWorkspace);
+app.post('/project/create', projectController.addProject);
 
-app.get('/workspace/workspaceTypeDrop', workspaceController.workspaceTypeDrop);
+app.get('/project/projectTypeDrop', projectController.projectTypeDrop);
 
-app.post('/workspace/viewWorkspace', workspaceController.viewWorkspace);
+app.post('/project/viewProject', projectController.viewProject);
 
-app.post('/workspace/viewById', workspaceController.viewById);
+app.post('/project/viewById', projectController.viewById);
 
-app.post('/workspace/addMembers', workspaceController.addMembers);
+app.post('/project/addMembers', projectController.addMembers);
 
-app.post('/workspace/removeMember', workspaceController.removeMember);
+app.post('/project/removeMember', projectController.removeMember);
 
-app.post('/workspace/editWorkspace', workspaceController.editWorkspace);
+app.post('/project/editProject', projectController.editProject);
 
 app.post('/board/create', boardController.addBoard);
 
@@ -76,6 +76,10 @@ app.post('/task/markAsDone', taskController.markAsDone);
 app.post('/task/manageVisibility', taskController.manageVisibility);
 
 app.post('/task/addedMembers', taskController.addedMembers);
+
+app.post('/task/addTaskPriority', taskController.addTaskPriority);
+
+app.get('/task/priorityList', taskController.priorityList);
 
 app.listen(8000, () => {
   console.log('Server started on port 8000');

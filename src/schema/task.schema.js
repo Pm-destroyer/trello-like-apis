@@ -28,6 +28,10 @@ const activities = connection.define('tasks', {
     field: 'visibleTo',
     type: Sequelize.STRING,
   },
+  priorityId: {
+    field: 'priorityId',
+    type: Sequelize.INTEGER,
+  },
 });
 
 module.exports = activities;

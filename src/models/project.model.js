@@ -1,21 +1,21 @@
 const Sequelize = require('sequelize');
 const { Op } = require('sequelize');
-const workspaceSchema = require('../schema/workspace.schema');
-const workspaceTypeSchema = require('../schema/workspaceType.schema');
+const projectSchema = require('../schema/project.schema');
+const projectTypeSchema = require('../schema/projectType.schema');
 const userSchema = require('../schema/user.schema');
 
-workspaceSchema.belongsTo(workspaceTypeSchema, {
+projectSchema.belongsTo(projectTypeSchema, {
   foreignKey: 'type',
 });
 
-workspaceSchema.belongsTo(userSchema, {
+projectSchema.belongsTo(userSchema, {
   foreignKey: 'userId',
 });
 
-const WorkspaceModel = {
-  addWorkspace: async (req, res) => {
+const projectModel = {
+  addproject: async (req, res) => {
     try {
-      await workspaceSchema
+      await projectSchema
         .create(req)
         .then((result) => {
           if (result) {
@@ -32,9 +32,9 @@ const WorkspaceModel = {
     }
   },
 
-  workspaceTypeDrop: async (req, res) => {
+  projectTypeDrop: async (req, res) => {
     try {
-      await workspaceTypeSchema
+      await projectTypeSchema
         .findAll({
           attributes: ['id', 'type'],
         })
@@ -49,9 +49,9 @@ const WorkspaceModel = {
     }
   },
 
-  viewWorkspace: async (req, res) => {
+  viewproject: async (req, res) => {
     try {
-      await workspaceSchema
+      await projectSchema
         .findAll({
           where: {
             [Op.or]: [
@@ -72,16 +72,16 @@ const WorkspaceModel = {
 
   viewById: async (req, res) => {
     try {
-      await workspaceSchema
+      await projectSchema
         .findOne({
           where: {
             id: Sequelize.where(
-              Sequelize.literal(`MD5(workspaces.id)`),
+              Sequelize.literal(`MD5(projects.id)`),
               req.id
             ),
           },
           attributes: [
-            [Sequelize.literal('MD5(workspaces.id)'), 'id'],
+            [Sequelize.literal('MD5(projects.id)'), 'id'],
             'name',
             'description',
             'type',
@@ -90,7 +90,7 @@ const WorkspaceModel = {
           ],
           include: [
             {
-              model: workspaceTypeSchema,
+              model: projectTypeSchema,
             },
             {
               model: userSchema,
@@ -128,22 +128,22 @@ const WorkspaceModel = {
 
   addMembers: async (req, res) => {
     try {
-      await workspaceSchema
+      await projectSchema
         .findOne({
           where: {
-            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.workspaceId),
+            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.projectId),
           },
           attributes: ['id'],
         })
-        .then(async (workspace) => {
-          req.workspaceId = workspace.dataValues.id;
+        .then(async (project) => {
+          req.projectId = project.dataValues.id;
 
-          await workspaceSchema
+          await projectSchema
             .update(
               { members: req.addedMembers + req.members.join(',') + ',' },
               {
                 where: {
-                  [Op.and]: [{ userId: req.userId }, { id: req.workspaceId }],
+                  [Op.and]: [{ userId: req.userId }, { id: req.projectId }],
                 },
               }
             )
@@ -159,22 +159,22 @@ const WorkspaceModel = {
 
   removeMember: async (req, res) => {
     try {
-      await workspaceSchema
+      await projectSchema
         .findOne({
           where: {
-            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.workspaceId),
+            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.projectId),
           },
           attributes: ['id'],
         })
-        .then(async (workspace) => {
-          req.workspaceId = workspace.dataValues.id;
+        .then(async (project) => {
+          req.projectId = project.dataValues.id;
 
-          await workspaceSchema
+          await projectSchema
             .update(
               { members: req.members.join(',') + ',' },
               {
                 where: {
-                  [Op.and]: [{ userId: req.userId }, { id: req.workspaceId }],
+                  [Op.and]: [{ userId: req.userId }, { id: req.projectId }],
                 },
               }
             )
@@ -188,15 +188,15 @@ const WorkspaceModel = {
     }
   },
 
-  editWorkspace: async (req, res) => {
+  editproject: async (req, res) => {
     try {
-      await workspaceSchema
+      await projectSchema
         .update(
           { name: req.name },
           {
             where: {
               id: Sequelize.where(
-                Sequelize.literal(`MD5(workspaces.id)`),
+                Sequelize.literal(`MD5(projects.id)`),
                 req.id
               ),
             },
@@ -218,4 +218,4 @@ const WorkspaceModel = {
   },
 };
 
-module.exports = WorkspaceModel;
+module.exports = projectModel;
