@@ -2,24 +2,24 @@ const Sequelize = require('sequelize');
 const { Op } = require('sequelize');
 
 const boardSchema = require('../schema/board.schema');
-const workspaceSchema = require('../schema/project.schema');
+const projectSchema = require('../schema/project.schema');
 
-boardSchema.belongsTo(workspaceSchema, {
-  foreignKey: 'workspaceId',
+boardSchema.belongsTo(projectSchema, {
+  foreignKey: 'projectId',
 });
 
 const BoardModel = {
   addBoard: async (req, res) => {
     try {
-      await workspaceSchema
+      await projectSchema
         .findOne({
           where: {
-            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.workspaceId),
+            id: Sequelize.where(Sequelize.literal('MD5(id)'), req.projectId),
           },
           attributes: ['id'],
         })
-        .then(async (workspace) => {
-          req.workspaceId = workspace.dataValues.id;
+        .then(async (project) => {
+          req.projectId = project.dataValues.id;
 
           await boardSchema
             .create(req)
@@ -44,15 +44,15 @@ const BoardModel = {
       await boardSchema
         .findAll({
           where: {
-            workspaceId: Sequelize.where(
-              Sequelize.literal('MD5(workspaceId)'),
-              req.workspaceId
+            projectId: Sequelize.where(
+              Sequelize.literal('MD5(projectId)'),
+              req.projectId
             ),
           },
           attributes: [[Sequelize.literal('MD5(boards.id)'), 'id'], 'name'],
           includes: [
             {
-              model: workspaceSchema,
+              model: projectSchema,
               where: {
                 [Op.or]: [
                   { userId: req.userId },
@@ -81,9 +81,9 @@ const BoardModel = {
                 id: Sequelize.where(Sequelize.literal('MD5(id)'), req.id),
               },
               {
-                workspaceId: Sequelize.where(
-                  Sequelize.literal('MD5(workspaceId)'),
-                  req.workspaceId
+                projectId: Sequelize.where(
+                  Sequelize.literal('MD5(projectId)'),
+                  req.projectId
                 ),
               },
             ],
@@ -92,7 +92,7 @@ const BoardModel = {
             [Sequelize.literal('MD5(id)'), 'id'],
             'name',
             'description',
-            Sequelize.literal('MD5(workspaceId)', 'workspaceId'),
+            Sequelize.literal('MD5(projectId)', 'projectId'),
             'userId',
             'members',
           ],

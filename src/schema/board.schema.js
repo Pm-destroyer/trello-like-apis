@@ -16,8 +16,8 @@ const boards = connection.define('boards', {
     field: 'description',
     type: Sequelize.STRING,
   },
-  workspaceId: {
-    field: 'workspaceId',
+  projectId: {
+    field: 'projectId',
     type: Sequelize.INTEGER,
   },
   userId: {

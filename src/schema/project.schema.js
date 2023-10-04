@@ -25,7 +25,7 @@ const Projects = connection.define('projects', {
     type: Sequelize.INTEGER,
   },
   status: {
-    field: 'members',
+    field: 'status',
     type: Sequelize.INTEGER,
   },
   start_date: {

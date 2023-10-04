@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 const activitySchema = require('../schema/activity.schema');
 const boardSchema = require('../schema/board.schema');
-const workspaceSchema = require('../schema/project.schema');
+const projectSchema = require('../schema/project.schema');
 const userSchema = require('../schema/user.schema');
 
 activitySchema.belongsTo(boardSchema, {
@@ -21,8 +21,8 @@ activitySchema.belongsTo(userSchema, {
   as: 'lastModifiedBy',
 });
 
-boardSchema.belongsTo(workspaceSchema, {
-  foreignKey: 'workspaceId',
+boardSchema.belongsTo(projectSchema, {
+  foreignKey: 'projectId',
 });
 
 const activityModel = {
@@ -70,19 +70,12 @@ const activityModel = {
           include: [
             {
               model: boardSchema,
-              attributes: [
-                [Sequelize.literal('MD5(workspaceId)'), 'workspaceId'],
-              ],
+              attributes: [[Sequelize.literal('MD5(projectId)'), 'projectId']],
               include: [
                 {
-                  model: workspaceSchema,
+                  model: projectSchema,
                   where: {
-                    [Op.or]: [
-                      { userId: req.userId },
-                      {
-                        members: { [Op.like]: `%${req.userId}%` },
-                      },
-                    ],
+                    [Op.or]: [{ project_admin: req.project_admin }],
                   },
                 },
               ],
@@ -102,7 +95,7 @@ const activityModel = {
         .then((result) => {
           if (result) {
             result = result.filter(
-              (item) => item.dataValues.board.workspaceId === req.workspaceId
+              (item) => item.dataValues.board.projectId === req.projectId
             );
 
             res.send(result);

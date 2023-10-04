@@ -16,6 +16,7 @@ const sequelize = new Sequelize(
     define: {
       timestamps: false,
     },
+    omitNull: true,
   }
 );
 

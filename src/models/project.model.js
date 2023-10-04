@@ -9,7 +9,7 @@ projectSchema.belongsTo(projectTypeSchema, {
 });
 
 projectSchema.belongsTo(userSchema, {
-  foreignKey: 'userId',
+  foreignKey: 'project_admin',
 });
 
 const projectModel = {
@@ -54,14 +54,13 @@ const projectModel = {
       await projectSchema
         .findAll({
           where: {
-            [Op.or]: [
-              { userId: req.userId },
-              {
-                members: { [Op.like]: `%${req.userId}%` },
-              },
-            ],
+            [Op.or]: [{ project_admin: req.project_admin }],
           },
-          attributes: [[Sequelize.literal('MD5(id)'), 'id'], 'name', 'userId'],
+          attributes: [
+            [Sequelize.literal('MD5(id)'), 'id'],
+            'name',
+            'project_admin',
+          ],
         })
         .then((result) => res.send(result));
     } catch (error) {
@@ -75,18 +74,14 @@ const projectModel = {
       await projectSchema
         .findOne({
           where: {
-            id: Sequelize.where(
-              Sequelize.literal(`MD5(projects.id)`),
-              req.id
-            ),
+            id: Sequelize.where(Sequelize.literal(`MD5(projects.id)`), req.id),
           },
           attributes: [
             [Sequelize.literal('MD5(projects.id)'), 'id'],
             'name',
             'description',
             'type',
-            'userId',
-            'members',
+            'project_admin',
           ],
           include: [
             {
@@ -100,22 +95,7 @@ const projectModel = {
         })
         .then(async (result) => {
           if (result) {
-            if (result.dataValues.members !== null) {
-              await userSchema
-                .findAll({
-                  where: {
-                    id: { [Op.in]: result.dataValues.members.split(',') },
-                  },
-                  attributes: ['id', 'username'],
-                })
-                .then((users) => {
-                  result.dataValues.memberLists = users;
-                  res.send(result);
-                });
-            } else {
-              result.dataValues.users = [];
-              res.send(result);
-            }
+            res.send(result);
           } else {
             res.send(result);
           }
