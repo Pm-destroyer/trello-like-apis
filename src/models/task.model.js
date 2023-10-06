@@ -201,24 +201,22 @@ const activityModel = {
   },
 
   addTaskPriority: async (req, res) => {
-    try {
-      await taskSchema
-        .update(
-          {
-            priorityId: req.priorityId,
-          },
-          {
-            where: { id: req.id },
-          }
-        )
-        .then(async (result) => {
-          res.send(result);
-        })
-        .catch((err) => res.send(err));
-    } catch (error) {
-      console.log(error);
-      res.send(error);
-    }
+    await taskSchema
+      .update(
+        {
+          priorityId: req.priorityId,
+        },
+        {
+          where: { id: req.id },
+        }
+      )
+      .then(async (result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      });
   },
 
   priorityList: async (req, res) => {

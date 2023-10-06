@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
 
 const userSchema = require('../schema/user.schema');
-const workspaceSchema = require('../schema/project.schema');
+const projectSchema = require('../schema/project.schema');
 
 const checkDataExists = async (data) => {
   try {
@@ -120,20 +120,20 @@ const UserModel = {
 
   viewUsers: async (req, res) => {
     try {
-      await workspaceSchema
+      await projectSchema
         .findOne({
           where: {
             id: Sequelize.where(
-              Sequelize.literal(`MD5(workspaces.id)`),
-              req.workspaceId
+              Sequelize.literal(`MD5(projects.id)`),
+              req.projectId
             ),
           },
           attributes: ['members'],
         })
-        .then(async (resWorkspace) => {
+        .then(async (resproject) => {
           const members =
-            resWorkspace.dataValues.members !== null
-              ? resWorkspace.dataValues.members.split(',')
+            resproject.dataValues.members !== null
+              ? resproject.dataValues.members.split(',')
               : [];
           members.push(req.id);
 
@@ -152,22 +152,22 @@ const UserModel = {
     }
   },
 
-  userDropByWorkspace: async (req, res) => {
+  userDropByproject: async (req, res) => {
     try {
-      await workspaceSchema
+      await projectSchema
         .findOne({
           where: {
             id: Sequelize.where(
-              Sequelize.literal(`MD5(workspaces.id)`),
-              req.workspaceId
+              Sequelize.literal(`MD5(projects.id)`),
+              req.projectId
             ),
           },
           attributes: ['members'],
         })
-        .then(async (resWorkspace) => {
+        .then(async (resproject) => {
           const members =
-            resWorkspace.dataValues.members !== null
-              ? resWorkspace.dataValues.members.split(',')
+            resproject.dataValues.members !== null
+              ? resproject.dataValues.members.split(',')
               : [];
           members.push(req.id);
 
