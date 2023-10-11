@@ -20,6 +20,18 @@ const Users = connection.define('users', {
     field: 'token',
     type: Sequelize.STRING,
   },
+  first_name: {
+    field: 'first_name',
+    type: Sequelize.STRING,
+  },
+  last_name: {
+    field: 'last_name',
+    type: Sequelize.STRING,
+  },
+  roleId: {
+    field: 'roleId',
+    type: Sequelize.STRING,
+  },
 });
 
 module.exports = Users;

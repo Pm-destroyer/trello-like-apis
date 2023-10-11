@@ -24,6 +24,8 @@ app.post('/user/getUserByToken', userController.getUserByToken);
 
 app.post('/user/view', userController.viewUsers);
 
+app.post('/user/userList', userController.userList);
+
 app.post('/user/userDropByProject', userController.userDropByProject);
 
 app.post('/project/create', projectController.addProject);

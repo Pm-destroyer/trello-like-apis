@@ -185,6 +185,20 @@ const UserModel = {
       res.send(err);
     }
   },
+
+  userList: async (req, res) => {
+    await userSchema
+      .findAll({
+        attributes: ['id', 'username', 'first_name', 'last_name', 'roleId'],
+        limit: req.limit ?? 0,
+      })
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => {
+        res.send(error);
+      });
+  },
 };
 
 module.exports = UserModel;

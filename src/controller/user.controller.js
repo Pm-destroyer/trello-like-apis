@@ -20,6 +20,10 @@ const UserController = {
   userDropByProject: (req, res) => {
     userModel.userDropByProject(req.body, res);
   },
+
+  userList: (req, res) => {
+    userModel.userList(req.body, res);
+  },
 };
 
 module.exports = UserController;

@@ -57,9 +57,21 @@ const projectModel = {
             [Op.or]: [{ project_admin: req.project_admin }],
           },
           attributes: [
-            [Sequelize.literal('MD5(id)'), 'id'],
+            [Sequelize.literal('MD5(projects.id)'), 'id'],
             'name',
+            'description',
             'project_admin',
+            'status',
+            'start_date',
+            'end_date',
+            'est_max_costs',
+            'cost_type',
+          ],
+          include: [
+            {
+              model: projectTypeSchema,
+              attributes: ['type'],
+            },
           ],
         })
         .then((result) => res.send(result));
