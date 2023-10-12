@@ -186,16 +186,105 @@ const UserModel = {
     }
   },
 
-  userList: async (req, res) => {
+  userListByLimit: async (req, res) => {
     await userSchema
       .findAll({
         attributes: ['id', 'username', 'first_name', 'last_name', 'roleId'],
-        limit: req.limit ?? 0,
+        limit: req.limit,
       })
       .then((result) => {
         res.send(result);
       })
       .catch((error) => {
+        res.send(error);
+      });
+  },
+
+  userList: async (req, res) => {
+    let condition = {};
+    if (typeof req.search !== 'undefined' && req.search.value != '') {
+      condition.name = req.search.value;
+    } else {
+      condition.name = '';
+    }
+
+    const countAll = await userSchema.findAndCountAll({
+      where: {
+        [Op.or]: [
+          {
+            username: Sequelize.where(
+              Sequelize.fn('LOWER', Sequelize.col('username')),
+              'LIKE',
+              '%' + condition.name.toLowerCase() + '%'
+            ),
+          },
+          {
+            first_name: Sequelize.where(
+              Sequelize.fn('LOWER', Sequelize.col('first_name')),
+              'LIKE',
+              '%' + condition.name.toLowerCase() + '%'
+            ),
+          },
+          {
+            last_name: Sequelize.where(
+              Sequelize.fn('LOWER', Sequelize.col('last_name')),
+              'LIKE',
+              '%' + condition.name.toLowerCase() + '%'
+            ),
+          },
+        ],
+      },
+    });
+
+    const columns = req.columns.map((item) => item.data);
+
+    await userSchema
+      .findAll({
+        where: {
+          [Op.or]: [
+            {
+              username: Sequelize.where(
+                Sequelize.fn('LOWER', Sequelize.col('username')),
+                'LIKE',
+                '%' + condition.name.toLowerCase() + '%'
+              ),
+            },
+            {
+              first_name: Sequelize.where(
+                Sequelize.fn('LOWER', Sequelize.col('first_name')),
+                'LIKE',
+                '%' + condition.name.toLowerCase() + '%'
+              ),
+            },
+            {
+              last_name: Sequelize.where(
+                Sequelize.fn('LOWER', Sequelize.col('last_name')),
+                'LIKE',
+                '%' + condition.name.toLowerCase() + '%'
+              ),
+            },
+          ],
+        },
+        attributes: ['id', 'username', 'first_name', 'last_name', 'roleId'],
+        order: [
+          [Sequelize.col(columns[req.order[0].column]), req.order[0].dir],
+        ],
+        raw: true,
+        nest: true,
+        limit: parseInt(req.length),
+        offset: parseInt(req.start),
+      })
+      .then((result) => {
+        const responseData = {
+          recordsTotal: countAll.count,
+          recordsFiltered: countAll.count,
+          data: result,
+        };
+
+        res.send(responseData);
+      })
+      .catch((error) => {
+        console.log(error);
         res.send(error);
       });
   },

@@ -17,12 +17,12 @@ const UserController = {
     userModel.viewUsers(req.body, res);
   },
 
-  userDropByProject: (req, res) => {
-    userModel.userDropByProject(req.body, res);
-  },
-
   userList: (req, res) => {
     userModel.userList(req.body, res);
+  },
+
+  userListByLimit: (req, res) => {
+    userModel.userListByLimit(req.body, res);
   },
 };
 
