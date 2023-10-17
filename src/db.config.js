@@ -2,7 +2,7 @@ module.exports = {
   database: {
     HOST: 'localhost',
     USER: 'root',
-    PASSWORD: '',
+    PASSWORD: 'Devil',
     DATABASE: 'trello_like',
     dialect: 'mysql',
   },
