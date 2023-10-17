@@ -8,8 +8,8 @@ const workspaceTypes = connection.define('project_types', {
     primaryKey: true,
     autoIncrement: true,
   },
-  type: {
-    field: 'type',
+  short_name: {
+    field: 'short_name',
     type: Sequelize.STRING,
   },
 });

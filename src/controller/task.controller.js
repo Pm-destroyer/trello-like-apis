@@ -5,8 +5,8 @@ const taskController = {
     taskModel.addTask(req.body, res);
   },
 
-  viewTask: (req, res) => {
-    taskModel.viewTask(req.body, res);
+  viewTaskByLimit: (req, res) => {
+    taskModel.viewTaskByLimit(req.body, res);
   },
 
   editTask: (req, res) => {

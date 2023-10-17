@@ -12,10 +12,6 @@ const activities = connection.define('tasks', {
     field: 'name',
     type: Sequelize.STRING,
   },
-  activityId: {
-    field: 'activityId',
-    type: Sequelize.INTEGER,
-  },
   userId: {
     field: 'userId',
     type: Sequelize.INTEGER,
@@ -24,13 +20,33 @@ const activities = connection.define('tasks', {
     field: 'status',
     type: Sequelize.INTEGER,
   },
-  visibleTo: {
-    field: 'visibleTo',
-    type: Sequelize.STRING,
-  },
   priorityId: {
     field: 'priorityId',
     type: Sequelize.INTEGER,
+  },
+  project_id: {
+    field: 'project_id',
+    type: Sequelize.INTEGER,
+  },
+  created_by: {
+    field: 'created_by',
+    type: Sequelize.INTEGER,
+  },
+  estimated_hours: {
+    field: 'estimated_hours',
+    type: Sequelize.DOUBLE,
+  },
+  actual_hours: {
+    field: 'actual_hours',
+    type: Sequelize.DOUBLE,
+  },
+  start_date: {
+    field: 'start_date',
+    type: Sequelize.DATE,
+  },
+  end_date: {
+    field: 'end_date',
+    type: Sequelize.DATE,
   },
 });
 
