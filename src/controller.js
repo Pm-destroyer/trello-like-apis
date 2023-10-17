@@ -67,6 +67,8 @@ app.post('/activity/editActivity', activityController.editActivity);
 
 app.post('/task/create', taskController.addTask);
 
+app.post('/task/viewByProjectId', taskController.viewTaskById);
+
 app.post('/task/viewTaskByLimit', taskController.viewTaskByLimit);
 
 app.post('/task/editTask', taskController.editTask);

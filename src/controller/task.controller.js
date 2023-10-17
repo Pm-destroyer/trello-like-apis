@@ -5,6 +5,10 @@ const taskController = {
     taskModel.addTask(req.body, res);
   },
 
+  viewTaskById: (req, res) => {
+    taskModel.viewTaskById(req.body, res);
+  },
+
   viewTaskByLimit: (req, res) => {
     taskModel.viewTaskByLimit(req.body, res);
   },

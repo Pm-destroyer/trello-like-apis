@@ -1,21 +1,21 @@
-const Sequelize = require('sequelize');
-const { Op } = require('sequelize');
+const Sequelize = require("sequelize");
+const { Op } = require("sequelize");
 
-const activitySchema = require('../schema/activity.schema');
-const taskSchema = require('../schema/task.schema');
-const userSchema = require('../schema/user.schema');
-const prioritySchema = require('../schema/priority.schema');
+const activitySchema = require("../schema/activity.schema");
+const taskSchema = require("../schema/task.schema");
+const userSchema = require("../schema/user.schema");
+const prioritySchema = require("../schema/priority.schema");
 
 // taskSchema.belongsTo(activitySchema, {
 //   foreignKey: 'activityId',
 // });
 
 taskSchema.belongsTo(userSchema, {
-  foreignKey: 'userId',
+  foreignKey: "userId",
 });
 
 taskSchema.belongsTo(prioritySchema, {
-  foreignKey: 'priorityId',
+  foreignKey: "priorityId",
 });
 
 const activityModel = {
@@ -38,6 +38,128 @@ const activityModel = {
     }
   },
 
+  viewTaskById: async (req, res) => {
+    try {
+      let condition = {};
+      if (typeof req.search !== "undefined" && req.search.value != "") {
+        condition.name = req.search.value;
+      } else {
+        condition.name = "";
+      }
+      let response = {};
+
+      const countAll = await taskSchema.findAndCountAll({
+        where: {
+          [Op.and]: [
+            {
+              [Op.or]: [
+                {
+                  name: Sequelize.where(
+                    Sequelize.fn("LOWER", Sequelize.col("name")),
+                    "LIKE",
+                    "%" + condition.name.toLowerCase() + "%"
+                  ),
+                },
+                {
+                  estimated_hours: Sequelize.where(
+                    Sequelize.fn("LOWER", Sequelize.col("estimated_hours")),
+                    "LIKE",
+                    "%" + condition.name.toLowerCase() + "%"
+                  ),
+                },
+                {
+                  status: Sequelize.where(
+                    Sequelize.fn("LOWER", Sequelize.col("status")),
+                    "LIKE",
+                    "%" + condition.name.toLowerCase() + "%"
+                  ),
+                },
+              ],
+            },
+            {
+              project_id: req.project_id,
+            },
+          ],
+        },
+        raw: true,
+        nest: true,
+      });
+
+      await taskSchema
+        .findAll({
+          where: {
+            [Op.and]: [
+              {
+                [Op.or]: [
+                  {
+                    name: Sequelize.where(
+                      Sequelize.fn("LOWER", Sequelize.col("tasks.name")),
+                      "LIKE",
+                      "%" + condition.name.toLowerCase() + "%"
+                    ),
+                  },
+                  {
+                    estimated_hours: Sequelize.where(
+                      Sequelize.fn("LOWER", Sequelize.col("estimated_hours")),
+                      "LIKE",
+                      "%" + condition.name.toLowerCase() + "%"
+                    ),
+                  },
+                  {
+                    actual_hours: Sequelize.where(
+                      Sequelize.fn("LOWER", Sequelize.col("actual_hours")),
+                      "LIKE",
+                      "%" + condition.name.toLowerCase() + "%"
+                    ),
+                  },
+                  {
+                    status: Sequelize.where(
+                      Sequelize.fn("LOWER", Sequelize.col("status")),
+                      "LIKE",
+                      "%" + condition.name.toLowerCase() + "%"
+                    ),
+                  },
+                ],
+              },
+              {
+                project_id: req.project_id,
+              },
+            ],
+          },
+          include: [
+            {
+              model: prioritySchema,
+              attributes: ["name"],
+            },
+          ],
+          raw: true,
+          nest: true,
+          limit: parseInt(req.length),
+          offset: parseInt(req.start),
+        })
+        .then((result) => {
+          if (result) {
+            response = {
+              status: "200",
+              recordsTotal: countAll.count,
+              recordsFiltered: countAll.count,
+              data: result,
+            };
+            res.send(response);
+          } else {
+            response = {
+              status: "404",
+              data: "task not found",
+            };
+            res.send(response);
+          }
+        });
+    } catch (err) {
+      console.log(err);
+      res.send(err);
+    }
+  },
+
   viewTaskByLimit: async (req, res) => {
     await taskSchema
       .findAll({
@@ -51,7 +173,7 @@ const activityModel = {
         include: [
           {
             model: prioritySchema,
-            attributes: ['name'],
+            attributes: ["name"],
           },
         ],
       })
@@ -75,7 +197,7 @@ const activityModel = {
         })
         .catch((err) => res.send(err));
     } catch (error) {
-      console.log('error');
+      console.log("error");
       res.send(error);
     }
   },
@@ -140,7 +262,7 @@ const activityModel = {
         .update(
           {
             visibleTo:
-              req.visibleTo.length === 0 ? null : req.visibleTo.join(','),
+              req.visibleTo.length === 0 ? null : req.visibleTo.join(","),
           },
           {
             where: { id: req.id },
@@ -161,16 +283,16 @@ const activityModel = {
       await taskSchema
         .findOne({
           where: { id: req.id },
-          attributes: ['id', 'visibleTo'],
+          attributes: ["id", "visibleTo"],
         })
         .then(async (result) => {
           if (result.dataValues.visibleTo !== null) {
             await userSchema
               .findAll({
                 where: {
-                  id: { [Op.in]: [result.dataValues.visibleTo.split(',')] },
+                  id: { [Op.in]: [result.dataValues.visibleTo.split(",")] },
                 },
-                attributes: ['id', 'username'],
+                attributes: ["id", "username"],
               })
               .then((members) => {
                 result.dataValues.members = members;
@@ -210,7 +332,7 @@ const activityModel = {
     try {
       prioritySchema
         .findAll({
-          attributes: ['id', 'name'],
+          attributes: ["id", "name"],
         })
         .then((result) => {
           res.send(result);
