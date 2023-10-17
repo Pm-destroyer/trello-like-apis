@@ -71,7 +71,7 @@ const projectModel = {
           include: [
             {
               model: projectTypeSchema,
-              attributes: ['type'],
+              attributes: ['type', 'short_name'],
             },
           ],
         })
@@ -93,16 +93,17 @@ const projectModel = {
             [Sequelize.literal('MD5(projects.id)'), 'id'],
             'name',
             'description',
-            'type',
             'project_admin',
+            'status',
+            'start_date',
+            'end_date',
+            'est_max_costs',
+            'cost_type',
           ],
           include: [
             {
               model: projectTypeSchema,
-            },
-            {
-              model: userSchema,
-              attributes: ['id', 'username'],
+              attributes: ['type', 'short_name'],
             },
           ],
         })

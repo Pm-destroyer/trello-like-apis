@@ -6,9 +6,9 @@ const taskSchema = require('../schema/task.schema');
 const userSchema = require('../schema/user.schema');
 const prioritySchema = require('../schema/priority.schema');
 
-taskSchema.belongsTo(activitySchema, {
-  foreignKey: 'activityId',
-});
+// taskSchema.belongsTo(activitySchema, {
+//   foreignKey: 'activityId',
+// });
 
 taskSchema.belongsTo(userSchema, {
   foreignKey: 'userId',
@@ -38,43 +38,30 @@ const activityModel = {
     }
   },
 
-  viewTask: async (req, res) => {
-    try {
-      await taskSchema
-        .findAll({
-          where: {
-            activityId: req.activityId,
+  viewTaskByLimit: async (req, res) => {
+    await taskSchema
+      .findAll({
+        where: {
+          project_id: Sequelize.where(
+            Sequelize.literal(`MD5(project_id)`),
+            req.project_id
+          ),
+        },
+        limit: req.limit,
+        include: [
+          {
+            model: prioritySchema,
+            attributes: ['name'],
           },
-        })
-        .then(async (result) => {
-          if (result) {
-            for (const key in result) {
-              const memberIds =
-                result[key].dataValues.visibleTo !== null
-                  ? result[key].dataValues.visibleTo.split(',')
-                  : null;
-
-              if (memberIds !== null) {
-                const members = await userSchema.findAll({
-                  where: { id: { [Op.in]: memberIds } },
-                  attributes: ['id', 'username'],
-                });
-
-                result[key].dataValues.members = members;
-              } else {
-                result[key].dataValues.members = [];
-              }
-            }
-
-            res.send(result);
-          } else {
-            res.send(null);
-          }
-        });
-    } catch (err) {
-      console.error(err);
-      res.send(err);
-    }
+        ],
+      })
+      .then(async (result) => {
+        res.send(result);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.send(error);
+      });
   },
 
   deleteTask: async (req, res) => {
