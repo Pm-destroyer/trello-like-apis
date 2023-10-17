@@ -51,6 +51,7 @@ const projectModel = {
 
   viewproject: async (req, res) => {
     try {
+      console.log(req);
       await projectSchema
         .findAll({
           where: {
