@@ -5,6 +5,7 @@ const activitySchema = require('../schema/activity.schema');
 const taskSchema = require('../schema/task.schema');
 const userSchema = require('../schema/user.schema');
 const prioritySchema = require('../schema/priority.schema');
+const projectSchema = require('../schema/project.schema');
 
 // taskSchema.belongsTo(activitySchema, {
 //   foreignKey: 'activityId',
@@ -21,8 +22,15 @@ taskSchema.belongsTo(prioritySchema, {
 const activityModel = {
   addTask: async (req, res) => {
     try {
+      const project_id = await projectSchema.findOne({
+        where: {
+          id: Sequelize.where(Sequelize.literal(`MD5(id)`), req.project_id),
+        },
+        attributes: ['id'],
+      });
+
       await taskSchema
-        .create(req)
+        .create({ ...req, ...{ project_id: project_id.id } })
         .then((result) => {
           if (result) {
             res.send(result);
