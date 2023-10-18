@@ -55,7 +55,14 @@ const activityModel = {
               [Op.or]: [
                 {
                   name: Sequelize.where(
-                    Sequelize.fn('LOWER', Sequelize.col('name')),
+                    Sequelize.fn('LOWER', Sequelize.col('tasks.name')),
+                    'LIKE',
+                    '%' + condition.name.toLowerCase() + '%'
+                  ),
+                },
+                {
+                  estimated_hours: Sequelize.where(
+                    Sequelize.fn('LOWER', Sequelize.col('priority.name')),
                     'LIKE',
                     '%' + condition.name.toLowerCase() + '%'
                   ),
@@ -63,6 +70,13 @@ const activityModel = {
                 {
                   estimated_hours: Sequelize.where(
                     Sequelize.fn('LOWER', Sequelize.col('estimated_hours')),
+                    'LIKE',
+                    '%' + condition.name.toLowerCase() + '%'
+                  ),
+                },
+                {
+                  actual_hours: Sequelize.where(
+                    Sequelize.fn('LOWER', Sequelize.col('actual_hours')),
                     'LIKE',
                     '%' + condition.name.toLowerCase() + '%'
                   ),
@@ -84,9 +98,10 @@ const activityModel = {
             },
           ],
         },
-        raw: true,
-        nest: true,
+        include: [{ model: prioritySchema }],
       });
+
+      const columns = req.columns.map((item) => item.data);
 
       await taskSchema
         .findAll({
@@ -97,6 +112,13 @@ const activityModel = {
                   {
                     name: Sequelize.where(
                       Sequelize.fn('LOWER', Sequelize.col('tasks.name')),
+                      'LIKE',
+                      '%' + condition.name.toLowerCase() + '%'
+                    ),
+                  },
+                  {
+                    estimated_hours: Sequelize.where(
+                      Sequelize.fn('LOWER', Sequelize.col('priority.name')),
                       'LIKE',
                       '%' + condition.name.toLowerCase() + '%'
                     ),
@@ -137,6 +159,9 @@ const activityModel = {
               model: prioritySchema,
               attributes: ['name'],
             },
+          ],
+          order: [
+            [Sequelize.col(columns[req.order[0].column]), req.order[0].dir],
           ],
           raw: true,
           nest: true,
